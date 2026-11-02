@@ -1,0 +1,9 @@
+# Documentos internos de trabajo
+plan-tpi-parapente.*
+# Secretos y archivos locales
+.env
+.DS_Store
+# Build
+target/
+.idea/
+.vscode/
