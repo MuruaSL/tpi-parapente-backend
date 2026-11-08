@@ -1,0 +1,970 @@
+{
+  "info": {
+    "name": "Parapente - Seguridad y errores",
+    "description": "Casos negativos, seguridad e integracion. Correr despues de 'Flujo completo' (comparte environment).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "0 Auth",
+      "item": [
+        {
+          "name": "Token cliente1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Token 200', ()=>pm.response.to.have.status(200));",
+                  "pm.environment.set('tokenCliente', pm.response.json().access_token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{kcUrl}}/realms/{{realm}}/protocol/openid-connect/token"
+            },
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "grant_type",
+                  "value": "password"
+                },
+                {
+                  "key": "client_id",
+                  "value": "{{clientId}}"
+                },
+                {
+                  "key": "username",
+                  "value": "cliente1"
+                },
+                {
+                  "key": "password",
+                  "value": "Cliente123!"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Token piloto1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Token 200', ()=>pm.response.to.have.status(200));",
+                  "pm.environment.set('tokenPiloto', pm.response.json().access_token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{kcUrl}}/realms/{{realm}}/protocol/openid-connect/token"
+            },
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "grant_type",
+                  "value": "password"
+                },
+                {
+                  "key": "client_id",
+                  "value": "{{clientId}}"
+                },
+                {
+                  "key": "username",
+                  "value": "piloto1"
+                },
+                {
+                  "key": "password",
+                  "value": "Piloto123!"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Token admin1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Token 200', ()=>pm.response.to.have.status(200));",
+                  "pm.environment.set('tokenAdmin', pm.response.json().access_token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{kcUrl}}/realms/{{realm}}/protocol/openid-connect/token"
+            },
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "grant_type",
+                  "value": "password"
+                },
+                {
+                  "key": "client_id",
+                  "value": "{{clientId}}"
+                },
+                {
+                  "key": "username",
+                  "value": "admin1"
+                },
+                {
+                  "key": "password",
+                  "value": "Admin123!"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "1 Autenticacion y roles",
+      "item": [
+        {
+          "name": "Sin token -> 401",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 401', ()=>pm.expect([401]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/turnos"
+            }
+          }
+        },
+        {
+          "name": "Token invalido -> 401",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 401', ()=>pm.expect([401]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer abc.def.ghi"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/turnos"
+            }
+          }
+        },
+        {
+          "name": "Sin token en listado completo (V6) -> 401",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 401', ()=>pm.expect([401]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/reservas"
+            }
+          }
+        },
+        {
+          "name": "cliente1 en listado completo (V6) -> 403",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 403', ()=>pm.expect([403]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/reservas"
+            }
+          }
+        },
+        {
+          "name": "cliente1 crea turno -> 403",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 403', ()=>pm.expect([403]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/turnos"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"sitioId\":1,\"tipoVueloId\":1,\"fechaHora\":\"2030-01-01T10:00:00\",\"cupo\":3}"
+            }
+          }
+        },
+        {
+          "name": "cliente1 revalida -> 403",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 403', ()=>pm.expect([403]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/reservas/revalidacion"
+            }
+          }
+        },
+        {
+          "name": "cliente1 lista pilotos -> 403",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 403', ()=>pm.expect([403]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/pilotos"
+            }
+          }
+        },
+        {
+          "name": "piloto1 lista pilotos -> 403",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 403', ()=>pm.expect([403]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenPiloto}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/pilotos"
+            }
+          }
+        },
+        {
+          "name": "admin1 lista pilotos -> 200",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 200', ()=>pm.expect([200]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/pilotos"
+            }
+          }
+        },
+        {
+          "name": "cliente1 mi-agenda -> 403",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 403', ()=>pm.expect([403]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/pilotos/mi-agenda"
+            }
+          }
+        },
+        {
+          "name": "cliente1 consulta clima por gateway -> 403",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 403', ()=>pm.expect([403]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/clima/veredicto?latitud=-31.4&longitud=-64.5&fechaHora={{fechaClima}}&vientoMaxKmh=25&margenKmh=10"
+            }
+          }
+        },
+        {
+          "name": "admin1 veredicto de clima -> 200/422/503 (depende de Open-Meteo)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 200/503', ()=>pm.expect([200, 503]).to.include(pm.response.code));",
+                  "if(pm.response.code===200) pm.test('Veredicto valido', ()=>pm.expect(['APTO','CONDICIONAL','NO_APTO']).to.include(pm.response.json().veredicto));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/clima/veredicto?latitud=-31.4&longitud=-64.5&fechaHora={{fechaClima}}&vientoMaxKmh=25&margenKmh=10"
+            }
+          }
+        }
+      ],
+      "description": "fechaClima: definir en el environment una fecha ISO futura (<=16 dias), p.ej. 2026-11-15T10:00:00."
+    },
+    {
+      "name": "2 Reserva ajena",
+      "item": [
+        {
+          "name": "admin1 crea una reserva en turno 1 (guarda id)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 201/422', ()=>pm.expect([201, 422]).to.include(pm.response.code));",
+                  "const j=pm.response.json();",
+                  "pm.environment.set('reservaAjenaId', j.id || j.reservaId);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/reservas"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"turnoId\": {{turnoApto}},\n  \"pesoKg\": 80,\n  \"edad\": 35\n}"
+            }
+          }
+        },
+        {
+          "name": "cliente1 pide reserva de admin1 -> 404",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 404', ()=>pm.expect([404]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/reservas/{{reservaAjenaId}}"
+            }
+          }
+        },
+        {
+          "name": "cliente1 cancela reserva ajena -> 404",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 404', ()=>pm.expect([404]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/reservas/{{reservaAjenaId}}/cancelacion"
+            }
+          }
+        },
+        {
+          "name": "Reserva inexistente -> 404",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 404', ()=>pm.expect([404]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/reservas/999999"
+            }
+          }
+        },
+        {
+          "name": "Validacion: body vacio -> 400",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 400', ()=>pm.expect([400]).to.include(pm.response.code));",
+                  "pm.test('Trae detalles', ()=>pm.expect(pm.response.json()).to.have.property('detalles'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/reservas"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            }
+          }
+        },
+        {
+          "name": "Turno inexistente -> 404",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 404', ()=>pm.expect([404]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/reservas"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"turnoId\":999999,\"pesoKg\":70,\"edad\":30}"
+            }
+          }
+        },
+        {
+          "name": "Limpieza: admin cancela la reserva",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 200/422', ()=>pm.expect([200, 422]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/reservas/{{reservaAjenaId}}/cancelacion"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3 Endpoints internos no expuestos",
+      "item": [
+        {
+          "name": "Interno disponibles sin token -> 401/404",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 401/404', ()=>pm.expect([401, 404]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/internos/pilotos/disponibles?tipoVuelo=PRUEBA_APTO&fechaHora=2030-01-01T10:00:00"
+            }
+          }
+        },
+        {
+          "name": "Interno disponibles con token admin -> 404/403",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 403/404', ()=>pm.expect([403, 404]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/internos/pilotos/disponibles?tipoVuelo=PRUEBA_APTO&fechaHora=2030-01-01T10:00:00"
+            }
+          }
+        },
+        {
+          "name": "Interno POST asignaciones con token admin -> 404/403",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 403/404', ()=>pm.expect([403, 404]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/internos/asignaciones"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"pilotoId\":1,\"fechaHora\":\"2030-01-01T10:00:00\",\"reservaId\":1}"
+            }
+          }
+        },
+        {
+          "name": "Interno DELETE asignaciones con token admin -> 404/403",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 403/404', ()=>pm.expect([403, 404]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/internos/asignaciones/1"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4 Integracion (MANUAL: requieren detener servicios, ver README)",
+      "item": [
+        {
+          "name": "MANUAL V7 - pilotos-service detenido -> 503, nada guardado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 503', ()=>pm.expect([503]).to.include(pm.response.code));",
+                  "pm.test('Sin reserva a medias', ()=>pm.expect(pm.response.json()).to.not.have.property('reservaId'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/reservas"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"turnoId\":{{turnoApto}},\"pesoKg\":70,\"edad\":30}"
+            }
+          }
+        },
+        {
+          "name": "MANUAL V7b - verificar que no quedo reserva (mias sin cambios)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 200', ()=>pm.expect([200]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/reservas/mias"
+            }
+          }
+        },
+        {
+          "name": "MANUAL V5 - clima-service detenido -> 201 CONFIRMACION_PENDIENTE",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 201', ()=>pm.expect([201]).to.include(pm.response.code));",
+                  "pm.test('Estado CONFIRMACION_PENDIENTE', ()=>pm.expect(pm.response.json().estado).to.eql('CONFIRMACION_PENDIENTE'));",
+                  "pm.environment.set('reservaPendienteId', pm.response.json().id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/reservas"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"turnoId\":{{turnoReprogramar}},\"pesoKg\":70,\"edad\":30}"
+            }
+          }
+        },
+        {
+          "name": "MANUAL V5b - clima detenido: revalidar -> sinCambios (no falla)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 200', ()=>pm.expect([200]).to.include(pm.response.code));",
+                  "pm.test('sinCambios>0', ()=>pm.expect(pm.response.json().sinCambios).to.be.above(0));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/reservas/revalidacion"
+            }
+          }
+        },
+        {
+          "name": "MANUAL V5c - clima levantado: revalidar -> CONFIRMADA",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 200', ()=>pm.expect([200]).to.include(pm.response.code));",
+                  "pm.test('confirmadas>0', ()=>pm.expect(pm.response.json().confirmadas).to.be.above(0));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/reservas/revalidacion"
+            }
+          }
+        },
+        {
+          "name": "MANUAL V5d - la reserva ahora esta CONFIRMADA",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 200', ()=>pm.expect([200]).to.include(pm.response.code));",
+                  "pm.test('Estado CONFIRMADA', ()=>pm.expect(pm.response.json().estado).to.eql('CONFIRMADA'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/reservas/{{reservaPendienteId}}"
+            }
+          }
+        }
+      ],
+      "description": "Estos requests fallan si se corren sin preparar el escenario. Excluirlos del Runner automatico."
+    }
+  ]
+}

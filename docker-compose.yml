@@ -1,0 +1,117 @@
+# Levanta todo el TPI: postgres, keycloak, gateway y los 3 servicios.
+# Sólo el gateway (8080) y keycloak (8180) publican puertos al host.
+x-servicio: &servicio
+  restart: "no"
+  environment: &env-comun
+    JAVA_TOOL_OPTIONS: -Xmx256m
+    DB_USER: "${POSTGRES_USER:?Falta .env: copiá .env.example a .env}"
+    DB_PASSWORD: "${POSTGRES_PASSWORD:?Falta .env: copiá .env.example a .env}"
+    KEYCLOAK_JWK_URI: http://keycloak:8080/realms/parapente/protocol/openid-connect/certs
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: "${POSTGRES_USER:?Falta .env: copiá .env.example a .env}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?Falta .env: copiá .env.example a .env}"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./infra/postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U ${POSTGRES_USER} -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0
+    command: start-dev --import-realm
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: "${KEYCLOAK_ADMIN:?Falta .env: copiá .env.example a .env}"
+      KC_BOOTSTRAP_ADMIN_PASSWORD: "${KEYCLOAK_ADMIN_PASSWORD:?Falta .env: copiá .env.example a .env}"
+    volumes:
+      - ./keycloak:/opt/keycloak/data/import
+    ports:
+      - "8180:8080"
+    healthcheck:
+      # la imagen no trae curl: se prueba que el puerto 8080 acepte conexiones
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8080"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+
+  pilotos-service:
+    <<: *servicio
+    build: ./pilotos-service
+    environment:
+      <<: *env-comun
+      DB_URL: jdbc:postgresql://postgres:5432/pilotos_db
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs http://localhost:8081/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 40s
+    depends_on:
+      postgres: {condition: service_healthy}
+      keycloak: {condition: service_healthy}
+
+  clima-service:
+    <<: *servicio
+    build: ./clima-service
+    environment:
+      <<: *env-comun
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs http://localhost:8083/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 40s
+    depends_on:
+      keycloak: {condition: service_healthy}
+
+  vuelos-service:
+    <<: *servicio
+    build: ./vuelos-service
+    environment:
+      <<: *env-comun
+      DB_URL: jdbc:postgresql://postgres:5432/vuelos_db
+      PILOTOS_URL: http://pilotos-service:8081
+      CLIMA_URL: http://clima-service:8083
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs http://localhost:8082/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 40s
+    depends_on:
+      postgres: {condition: service_healthy}
+      keycloak: {condition: service_healthy}
+      pilotos-service: {condition: service_healthy}
+      clima-service: {condition: service_healthy}
+
+  api-gateway:
+    <<: *servicio
+    build: ./api-gateway
+    environment:
+      <<: *env-comun
+      PILOTOS_URL: http://pilotos-service:8081
+      VUELOS_URL: http://vuelos-service:8082
+      CLIMA_URL: http://clima-service:8083
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs http://localhost:8080/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 40s
+    depends_on:
+      keycloak: {condition: service_healthy}
+      pilotos-service: {condition: service_healthy}
+      vuelos-service: {condition: service_healthy}
+      clima-service: {condition: service_healthy}
+
+volumes:
+  pgdata:

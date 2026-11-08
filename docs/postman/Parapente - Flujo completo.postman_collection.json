@@ -1,0 +1,886 @@
+{
+  "info": {
+    "name": "Parapente - Flujo completo",
+    "description": "Orden: correr la coleccion completa con Collection Runner sobre datos recien sembrados (ver README). Codigos y estados verificados contra el codigo real.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "0 Auth",
+      "item": [
+        {
+          "name": "Token cliente1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Token 200', ()=>pm.response.to.have.status(200));",
+                  "pm.environment.set('tokenCliente', pm.response.json().access_token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{kcUrl}}/realms/{{realm}}/protocol/openid-connect/token"
+            },
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "grant_type",
+                  "value": "password"
+                },
+                {
+                  "key": "client_id",
+                  "value": "{{clientId}}"
+                },
+                {
+                  "key": "username",
+                  "value": "cliente1"
+                },
+                {
+                  "key": "password",
+                  "value": "Cliente123!"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Token piloto1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Token 200', ()=>pm.response.to.have.status(200));",
+                  "pm.environment.set('tokenPiloto', pm.response.json().access_token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{kcUrl}}/realms/{{realm}}/protocol/openid-connect/token"
+            },
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "grant_type",
+                  "value": "password"
+                },
+                {
+                  "key": "client_id",
+                  "value": "{{clientId}}"
+                },
+                {
+                  "key": "username",
+                  "value": "piloto1"
+                },
+                {
+                  "key": "password",
+                  "value": "Piloto123!"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Token admin1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Token 200', ()=>pm.response.to.have.status(200));",
+                  "pm.environment.set('tokenAdmin', pm.response.json().access_token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{kcUrl}}/realms/{{realm}}/protocol/openid-connect/token"
+            },
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "grant_type",
+                  "value": "password"
+                },
+                {
+                  "key": "client_id",
+                  "value": "{{clientId}}"
+                },
+                {
+                  "key": "username",
+                  "value": "admin1"
+                },
+                {
+                  "key": "password",
+                  "value": "Admin123!"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "1 Turnos y flujo feliz",
+      "item": [
+        {
+          "name": "Listar turnos (cliente1)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 200', ()=>pm.expect([200]).to.include(pm.response.code));",
+                  "pm.test('Hay turnos', ()=>pm.expect(pm.response.json().length).to.be.above(0));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/turnos"
+            }
+          }
+        },
+        {
+          "name": "Detalle turno 1 (PRUEBA_APTO)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 200', ()=>pm.expect([200]).to.include(pm.response.code));",
+                  "pm.test('Tipo PRUEBA_APTO', ()=>pm.expect(pm.response.json().tipoVuelo).to.eql('PRUEBA_APTO'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/turnos/{{turnoApto}}"
+            }
+          }
+        },
+        {
+          "name": "Tipos de vuelo (guarda nombre de PRUEBA_APTO)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 200', ()=>pm.expect([200]).to.include(pm.response.code));",
+                  "const t=pm.response.json().find(x=>x.codigo==='PRUEBA_APTO'); pm.expect(t).to.exist; pm.environment.set('tipoAptoId', t.id); pm.environment.set('tipoAptoNombre', t.nombre);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/tipos-vuelo"
+            }
+          }
+        },
+        {
+          "name": "Reservar turno 1 -> 201 CONFIRMADA",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 201', ()=>pm.expect([201]).to.include(pm.response.code));",
+                  "pm.test('Estado CONFIRMADA', ()=>pm.expect(pm.response.json().estado).to.eql('CONFIRMADA'));",
+                  "const j=pm.response.json();",
+                  "pm.environment.set('reservaId', j.id || j.reservaId);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/reservas"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"turnoId\": {{turnoApto}},\n  \"pesoKg\": 70,\n  \"edad\": 30\n}"
+            }
+          }
+        },
+        {
+          "name": "Mis reservas (cliente1)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 200', ()=>pm.expect([200]).to.include(pm.response.code));",
+                  "pm.test('Incluye la reserva', ()=>pm.expect(pm.response.json().map(r=>String(r.id))).to.include(String(pm.environment.get('reservaId'))));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/reservas/mias"
+            }
+          }
+        },
+        {
+          "name": "Detalle de la reserva propia",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 200', ()=>pm.expect([200]).to.include(pm.response.code));",
+                  "pm.test('Estado CONFIRMADA', ()=>pm.expect(pm.response.json().estado).to.eql('CONFIRMADA'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/reservas/{{reservaId}}"
+            }
+          }
+        },
+        {
+          "name": "Agenda del piloto1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 200', ()=>pm.expect([200]).to.include(pm.response.code));",
+                  "pm.test('Es lista', ()=>pm.expect(pm.response.json()).to.be.an('array'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenPiloto}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/pilotos/mi-agenda"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2 Reglas de negocio",
+      "item": [
+        {
+          "name": "R1 peso fuera de rango -> 422 RECHAZADA",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 422', ()=>pm.expect([422]).to.include(pm.response.code));",
+                  "pm.test('Estado RECHAZADA', ()=>pm.expect(pm.response.json().estado).to.eql('RECHAZADA'));",
+                  "const j=pm.response.json();",
+                  "pm.test('Motivo menciona peso', ()=>pm.expect(String(j.motivo).toLowerCase()).to.include('peso'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/reservas"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"turnoId\": {{turnoApto}},\n  \"pesoKg\": 200,\n  \"edad\": 30\n}"
+            }
+          }
+        },
+        {
+          "name": "R2 menor de edad -> 422 RECHAZADA",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 422', ()=>pm.expect([422]).to.include(pm.response.code));",
+                  "pm.test('Estado RECHAZADA', ()=>pm.expect(pm.response.json().estado).to.eql('RECHAZADA'));",
+                  "const j=pm.response.json();",
+                  "pm.test('Motivo menciona edad', ()=>pm.expect(String(j.motivo).toLowerCase()).to.include('edad'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/reservas"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"turnoId\": {{turnoApto}},\n  \"pesoKg\": 70,\n  \"edad\": 10\n}"
+            }
+          }
+        },
+        {
+          "name": "R7 doble reserva (ya reservo turno 1) -> 422 RECHAZADA",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 422', ()=>pm.expect([422]).to.include(pm.response.code));",
+                  "pm.test('Estado RECHAZADA', ()=>pm.expect(pm.response.json().estado).to.eql('RECHAZADA'));",
+                  "const j=pm.response.json();"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/reservas"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"turnoId\": {{turnoApto}},\n  \"pesoKg\": 70,\n  \"edad\": 30\n}"
+            }
+          }
+        },
+        {
+          "name": "R3 turno 4 (cupo 1): cliente1 ocupa el cupo -> 201 CONFIRMADA",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 201', ()=>pm.expect([201]).to.include(pm.response.code));",
+                  "pm.test('Estado CONFIRMADA', ()=>pm.expect(pm.response.json().estado).to.eql('CONFIRMADA'));",
+                  "const j=pm.response.json();",
+                  "pm.environment.set('reservaTurno4Id', j.id || j.reservaId);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/reservas"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"turnoId\": {{turnoCupo1}},\n  \"pesoKg\": 70,\n  \"edad\": 30\n}"
+            }
+          }
+        },
+        {
+          "name": "R3 turno 4: admin1 con turno lleno -> 422 RECHAZADA",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 422', ()=>pm.expect([422]).to.include(pm.response.code));",
+                  "pm.test('Estado RECHAZADA', ()=>pm.expect(pm.response.json().estado).to.eql('RECHAZADA'));",
+                  "const j=pm.response.json();",
+                  "pm.environment.set('reservaAdminRechazadaId', j.id || j.reservaId);",
+                  "pm.test('Motivo menciona completo', ()=>pm.expect(String(j.motivo).toLowerCase()).to.include('completo'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/reservas"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"turnoId\": {{turnoCupo1}},\n  \"pesoKg\": 80,\n  \"edad\": 35\n}"
+            }
+          }
+        },
+        {
+          "name": "R4 turno 3 sin piloto certificado -> 422 RECHAZADA",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 422', ()=>pm.expect([422]).to.include(pm.response.code));",
+                  "pm.test('Estado RECHAZADA', ()=>pm.expect(pm.response.json().estado).to.eql('RECHAZADA'));",
+                  "const j=pm.response.json();"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/reservas"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"turnoId\": {{turnoSinPiloto}},\n  \"pesoKg\": 70,\n  \"edad\": 30\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3 Clima y revalidacion",
+      "item": [
+        {
+          "name": "Clima NO apto (turno 2) -> 422 RECHAZADA",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 422', ()=>pm.expect([422]).to.include(pm.response.code));",
+                  "pm.test('Estado RECHAZADA', ()=>pm.expect(pm.response.json().estado).to.eql('RECHAZADA'));",
+                  "const j=pm.response.json();"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/reservas"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"turnoId\": {{turnoNoApto}},\n  \"pesoKg\": 70,\n  \"edad\": 30\n}"
+            }
+          }
+        },
+        {
+          "name": "Revalidar (admin): clima apto, reservas siguen CONFIRMADA",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 200', ()=>pm.expect([200]).to.include(pm.response.code));",
+                  "const j=pm.response.json(); pm.test('Resumen', ()=>{pm.expect(j).to.have.keys('revisadas','confirmadas','aReprogramar','sinCambios'); pm.expect(j.aReprogramar).to.eql(0);});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/reservas/revalidacion"
+            }
+          }
+        },
+        {
+          "name": "Bajar viento de PRUEBA_APTO a 0/0 (admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 200', ()=>pm.expect([200]).to.include(pm.response.code));",
+                  "pm.test('Viento 0', ()=>pm.expect(pm.response.json().vientoMaxKmh).to.eql(0));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/tipos-vuelo/{{tipoAptoId}}"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"codigo\": \"PRUEBA_APTO\",\n  \"nombre\": \"{{tipoAptoNombre}}\",\n  \"pesoMin\": 40,\n  \"pesoMax\": 110,\n  \"edadMin\": 12,\n  \"vientoMaxKmh\": 0,\n  \"margenVientoKmh\": 0\n}"
+            }
+          }
+        },
+        {
+          "name": "Revalidar (admin) -> pasan a A_REPROGRAMAR",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 200', ()=>pm.expect([200]).to.include(pm.response.code));",
+                  "const j=pm.response.json(); pm.test('Al menos una a reprogramar', ()=>pm.expect(j.aReprogramar).to.be.above(0));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/reservas/revalidacion"
+            }
+          }
+        },
+        {
+          "name": "La reserva 1 quedo A_REPROGRAMAR (piloto liberado)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 200', ()=>pm.expect([200]).to.include(pm.response.code));",
+                  "pm.test('Estado A_REPROGRAMAR', ()=>pm.expect(pm.response.json().estado).to.eql('A_REPROGRAMAR'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/reservas/{{reservaId}}"
+            }
+          }
+        },
+        {
+          "name": "Restaurar viento de PRUEBA_APTO a 500/0 (admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 200', ()=>pm.expect([200]).to.include(pm.response.code));",
+                  "pm.test('Viento 500', ()=>pm.expect(pm.response.json().vientoMaxKmh).to.eql(500));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/tipos-vuelo/{{tipoAptoId}}"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"codigo\": \"PRUEBA_APTO\",\n  \"nombre\": \"{{tipoAptoNombre}}\",\n  \"pesoMin\": 40,\n  \"pesoMax\": 110,\n  \"edadMin\": 12,\n  \"vientoMaxKmh\": 500,\n  \"margenVientoKmh\": 0\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4 Reprogramacion y cancelacion",
+      "item": [
+        {
+          "name": "Reprogramar reserva 1 al turno 7 -> CONFIRMADA",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 200', ()=>pm.expect([200]).to.include(pm.response.code));",
+                  "pm.test('Estado CONFIRMADA', ()=>pm.expect(pm.response.json().estado).to.eql('CONFIRMADA'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/reservas/{{reservaId}}/reprogramacion"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"turnoId\": {{turnoReprogramar}}\n}"
+            }
+          }
+        },
+        {
+          "name": "Cancelar reserva 1 (dueno) -> CANCELADA",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 200', ()=>pm.expect([200]).to.include(pm.response.code));",
+                  "pm.test('Estado CANCELADA', ()=>pm.expect(pm.response.json().estado).to.eql('CANCELADA'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/reservas/{{reservaId}}/cancelacion"
+            }
+          }
+        },
+        {
+          "name": "Cancelar reserva del turno 4 (libera cupo) -> CANCELADA",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 200', ()=>pm.expect([200]).to.include(pm.response.code));",
+                  "pm.test('Estado CANCELADA', ()=>pm.expect(pm.response.json().estado).to.eql('CANCELADA'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/reservas/{{reservaTurno4Id}}/cancelacion"
+            }
+          }
+        },
+        {
+          "name": "Listado completo paginado (admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Codigo 200', ()=>pm.expect([200]).to.include(pm.response.code));",
+                  "pm.test('Paginado', ()=>pm.expect(pm.response.json()).to.have.property('content'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vuelos/reservas?page=0&size=5"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+# Gateway reactivo: único punto de entrada (puerto 8080). No recorta el path (sin StripPrefix):
+# los controladores de cada servicio ya viven bajo /api/v1/<servicio>/.
+# /api/v1/internos/** NO se enruta a propósito: son endpoints sólo para llamadas entre servicios.
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: vuelos
+              uri: ${VUELOS_URL:http://localhost:8082}
+              predicates:
+                - Path=/api/v1/vuelos/**
+            - id: pilotos
+              uri: ${PILOTOS_URL:http://localhost:8081}
+              predicates:
+                - Path=/api/v1/pilotos/**
+            - id: clima
+              uri: ${CLIMA_URL:http://localhost:8083}
+              predicates:
+                - Path=/api/v1/clima/**
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # Sólo se validan firma y expiración; el issuer no se valida (distinto host dentro/fuera de Docker).
+          jwk-set-uri: ${KEYCLOAK_JWK_URI:http://localhost:8180/realms/parapente/protocol/openid-connect/certs}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+# Swagger UI agregada: un solo selector con la documentación de los 3 servicios (vía este mismo gateway).
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    urls:
+      - name: vuelos
+        url: /api/v1/vuelos/v3/api-docs
+      - name: pilotos
+        url: /api/v1/pilotos/v3/api-docs
+      - name: clima
+        url: /api/v1/clima/v3/api-docs
+    oauth:
+      client-id: parapente-swagger
+      use-pkce-with-authorization-code-grant: true

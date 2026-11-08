@@ -1,0 +1,107 @@
+{
+  "realm": "parapente",
+  "enabled": true,
+  "sslRequired": "none",
+  "accessTokenLifespan": 3600,
+  "roles": {
+    "realm": [
+      {
+        "name": "CLIENTE"
+      },
+      {
+        "name": "PILOTO"
+      },
+      {
+        "name": "ADMIN"
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "parapente-swagger",
+      "enabled": true,
+      "publicClient": true,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "fullScopeAllowed": true,
+      "redirectUris": [
+        "http://localhost:8080/*"
+      ],
+      "webOrigins": [
+        "http://localhost:8080"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256"
+      }
+    },
+    {
+      "clientId": "parapente-postman",
+      "enabled": true,
+      "publicClient": true,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "fullScopeAllowed": true
+    }
+  ],
+  "users": [
+    {
+      "id": "11111111-1111-1111-1111-111111111111",
+      "username": "cliente1",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "cliente1",
+      "lastName": "Parapente",
+      "email": "cliente1@parapente.local",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Cliente123!",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "CLIENTE"
+      ]
+    },
+    {
+      "id": "22222222-2222-2222-2222-222222222222",
+      "username": "piloto1",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "piloto1",
+      "lastName": "Parapente",
+      "email": "piloto1@parapente.local",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Piloto123!",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "PILOTO"
+      ]
+    },
+    {
+      "id": "33333333-3333-3333-3333-333333333333",
+      "username": "admin1",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "admin1",
+      "lastName": "Parapente",
+      "email": "admin1@parapente.local",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Admin123!",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "ADMIN"
+      ]
+    }
+  ]
+}

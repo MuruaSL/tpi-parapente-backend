@@ -7,3 +7,5 @@ plan-tpi-parapente.*
 target/
 .idea/
 .vscode/
+cuestionario-compromiso.*
+*.log
