@@ -36,6 +36,10 @@ La primera vez tarda unos minutos (compila los 4 servicios dentro de Docker). Pa
 | `piloto1` | `Piloto123!` | PILOTO |
 | `admin1` | `Admin123!` | ADMIN |
 
+### Cambiar de usuario en Swagger
+Keycloak mantiene la sesión abierta y por eso el login sale con el usuario anterior. Para entrar con otro:
+abrir http://localhost:8180/realms/parapente/protocol/openid-connect/logout, confirmar el "Logout" y volver a apretar Authorize en Swagger. Alternativa: una ventana de incógnito por usuario.
+
 ## Tests
 Sin Docker, por servicio:
 ```bash
