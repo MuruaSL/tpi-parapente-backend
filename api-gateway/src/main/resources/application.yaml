@@ -51,3 +51,7 @@ springdoc:
     oauth:
       client-id: parapente-swagger
       use-pkce-with-authorization-code-grant: true
+      # Fuerza la pantalla de login de Keycloak en cada Authorize (si no, la sesión de Keycloak
+      # sigue abierta y Swagger vuelve a entrar solo con el mismo usuario). Útil para probar roles.
+      additional-query-string-params:
+        prompt: login
