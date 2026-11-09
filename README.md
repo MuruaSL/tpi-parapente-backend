@@ -12,6 +12,8 @@ Backend de microservicios que confirma una reserva de vuelo (parapente o globo) 
 - **clima-service** (8083): consulta Open-Meteo y devuelve el veredicto APTO / CONDICIONAL / NO_APTO.
 - **keycloak** (8180) para login y roles, y **postgres 16** con `vuelos_db` y `pilotos_db`.
 
+**Para el equipo, empezar por [docs/guia-equipo.md](docs/guia-equipo.md)** (cómo levantar, probar, leer y defender, estado y pruebas pendientes).
+
 Detalle técnico (rutas, roles, reglas): [docs/contrato-tecnico.md](docs/contrato-tecnico.md).
 
 ## Requisitos
