@@ -25,9 +25,7 @@
           "request": {
             "method": "POST",
             "header": [],
-            "url": {
-              "raw": "{{kcUrl}}/realms/{{realm}}/protocol/openid-connect/token"
-            },
+            "url": "{{kcUrl}}/realms/{{realm}}/protocol/openid-connect/token",
             "body": {
               "mode": "urlencoded",
               "urlencoded": [
@@ -68,9 +66,7 @@
           "request": {
             "method": "POST",
             "header": [],
-            "url": {
-              "raw": "{{kcUrl}}/realms/{{realm}}/protocol/openid-connect/token"
-            },
+            "url": "{{kcUrl}}/realms/{{realm}}/protocol/openid-connect/token",
             "body": {
               "mode": "urlencoded",
               "urlencoded": [
@@ -111,9 +107,7 @@
           "request": {
             "method": "POST",
             "header": [],
-            "url": {
-              "raw": "{{kcUrl}}/realms/{{realm}}/protocol/openid-connect/token"
-            },
+            "url": "{{kcUrl}}/realms/{{realm}}/protocol/openid-connect/token",
             "body": {
               "mode": "urlencoded",
               "urlencoded": [
@@ -158,9 +152,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/vuelos/turnos"
-            }
+            "url": "{{baseUrl}}/api/v1/vuelos/turnos"
           }
         },
         {
@@ -184,9 +176,7 @@
                 "value": "Bearer abc.def.ghi"
               }
             ],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/vuelos/turnos"
-            }
+            "url": "{{baseUrl}}/api/v1/vuelos/turnos"
           }
         },
         {
@@ -205,9 +195,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/vuelos/reservas"
-            }
+            "url": "{{baseUrl}}/api/v1/vuelos/reservas"
           }
         },
         {
@@ -231,9 +219,7 @@
                 "value": "Bearer {{tokenCliente}}"
               }
             ],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/vuelos/reservas"
-            }
+            "url": "{{baseUrl}}/api/v1/vuelos/reservas"
           }
         },
         {
@@ -261,9 +247,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/vuelos/turnos"
-            },
+            "url": "{{baseUrl}}/api/v1/vuelos/turnos",
             "body": {
               "mode": "raw",
               "raw": "{\"sitioId\":1,\"tipoVueloId\":1,\"fechaHora\":\"2030-01-01T10:00:00\",\"cupo\":3}"
@@ -291,9 +275,7 @@
                 "value": "Bearer {{tokenCliente}}"
               }
             ],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/vuelos/reservas/revalidacion"
-            }
+            "url": "{{baseUrl}}/api/v1/vuelos/reservas/revalidacion"
           }
         },
         {
@@ -317,9 +299,7 @@
                 "value": "Bearer {{tokenCliente}}"
               }
             ],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/pilotos"
-            }
+            "url": "{{baseUrl}}/api/v1/pilotos"
           }
         },
         {
@@ -343,9 +323,7 @@
                 "value": "Bearer {{tokenPiloto}}"
               }
             ],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/pilotos"
-            }
+            "url": "{{baseUrl}}/api/v1/pilotos"
           }
         },
         {
@@ -369,9 +347,7 @@
                 "value": "Bearer {{tokenAdmin}}"
               }
             ],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/pilotos"
-            }
+            "url": "{{baseUrl}}/api/v1/pilotos"
           }
         },
         {
@@ -395,9 +371,7 @@
                 "value": "Bearer {{tokenCliente}}"
               }
             ],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/pilotos/mi-agenda"
-            }
+            "url": "{{baseUrl}}/api/v1/pilotos/mi-agenda"
           }
         },
         {
@@ -421,9 +395,7 @@
                 "value": "Bearer {{tokenCliente}}"
               }
             ],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/clima/veredicto?latitud=-31.4&longitud=-64.5&fechaHora={{fechaClima}}&vientoMaxKmh=25&margenKmh=10"
-            }
+            "url": "{{baseUrl}}/api/v1/clima/veredicto?latitud=-31.4&longitud=-64.5&fechaHora={{fechaClima}}&vientoMaxKmh=25&margenKmh=10"
           }
         },
         {
@@ -448,9 +420,7 @@
                 "value": "Bearer {{tokenAdmin}}"
               }
             ],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/clima/veredicto?latitud=-31.4&longitud=-64.5&fechaHora={{fechaClima}}&vientoMaxKmh=25&margenKmh=10"
-            }
+            "url": "{{baseUrl}}/api/v1/clima/veredicto?latitud=-31.4&longitud=-64.5&fechaHora={{fechaClima}}&vientoMaxKmh=25&margenKmh=10"
           }
         }
       ],
@@ -486,9 +456,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/vuelos/reservas"
-            },
+            "url": "{{baseUrl}}/api/v1/vuelos/reservas",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"turnoId\": {{turnoApto}},\n  \"pesoKg\": 80,\n  \"edad\": 35\n}"
@@ -516,9 +484,7 @@
                 "value": "Bearer {{tokenCliente}}"
               }
             ],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/vuelos/reservas/{{reservaAjenaId}}"
-            }
+            "url": "{{baseUrl}}/api/v1/vuelos/reservas/{{reservaAjenaId}}"
           }
         },
         {
@@ -542,9 +508,7 @@
                 "value": "Bearer {{tokenCliente}}"
               }
             ],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/vuelos/reservas/{{reservaAjenaId}}/cancelacion"
-            }
+            "url": "{{baseUrl}}/api/v1/vuelos/reservas/{{reservaAjenaId}}/cancelacion"
           }
         },
         {
@@ -568,9 +532,7 @@
                 "value": "Bearer {{tokenCliente}}"
               }
             ],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/vuelos/reservas/999999"
-            }
+            "url": "{{baseUrl}}/api/v1/vuelos/reservas/999999"
           }
         },
         {
@@ -599,9 +561,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/vuelos/reservas"
-            },
+            "url": "{{baseUrl}}/api/v1/vuelos/reservas",
             "body": {
               "mode": "raw",
               "raw": "{}"
@@ -633,9 +593,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/vuelos/reservas"
-            },
+            "url": "{{baseUrl}}/api/v1/vuelos/reservas",
             "body": {
               "mode": "raw",
               "raw": "{\"turnoId\":999999,\"pesoKg\":70,\"edad\":30}"
@@ -663,9 +621,7 @@
                 "value": "Bearer {{tokenAdmin}}"
               }
             ],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/vuelos/reservas/{{reservaAjenaId}}/cancelacion"
-            }
+            "url": "{{baseUrl}}/api/v1/vuelos/reservas/{{reservaAjenaId}}/cancelacion"
           }
         }
       ]
@@ -689,9 +645,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/internos/pilotos/disponibles?tipoVuelo=PRUEBA_APTO&fechaHora=2030-01-01T10:00:00"
-            }
+            "url": "{{baseUrl}}/api/v1/internos/pilotos/disponibles?tipoVuelo=PRUEBA_APTO&fechaHora=2030-01-01T10:00:00"
           }
         },
         {
@@ -715,9 +669,7 @@
                 "value": "Bearer {{tokenAdmin}}"
               }
             ],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/internos/pilotos/disponibles?tipoVuelo=PRUEBA_APTO&fechaHora=2030-01-01T10:00:00"
-            }
+            "url": "{{baseUrl}}/api/v1/internos/pilotos/disponibles?tipoVuelo=PRUEBA_APTO&fechaHora=2030-01-01T10:00:00"
           }
         },
         {
@@ -745,9 +697,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/internos/asignaciones"
-            },
+            "url": "{{baseUrl}}/api/v1/internos/asignaciones",
             "body": {
               "mode": "raw",
               "raw": "{\"pilotoId\":1,\"fechaHora\":\"2030-01-01T10:00:00\",\"reservaId\":1}"
@@ -775,9 +725,7 @@
                 "value": "Bearer {{tokenAdmin}}"
               }
             ],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/internos/asignaciones/1"
-            }
+            "url": "{{baseUrl}}/api/v1/internos/asignaciones/1"
           }
         }
       ]
@@ -811,9 +759,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/vuelos/reservas"
-            },
+            "url": "{{baseUrl}}/api/v1/vuelos/reservas",
             "body": {
               "mode": "raw",
               "raw": "{\"turnoId\":{{turnoApto}},\"pesoKg\":70,\"edad\":30}"
@@ -841,9 +787,7 @@
                 "value": "Bearer {{tokenCliente}}"
               }
             ],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/vuelos/reservas/mias"
-            }
+            "url": "{{baseUrl}}/api/v1/vuelos/reservas/mias"
           }
         },
         {
@@ -873,9 +817,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/vuelos/reservas"
-            },
+            "url": "{{baseUrl}}/api/v1/vuelos/reservas",
             "body": {
               "mode": "raw",
               "raw": "{\"turnoId\":{{turnoReprogramar}},\"pesoKg\":70,\"edad\":30}"
@@ -904,9 +846,7 @@
                 "value": "Bearer {{tokenAdmin}}"
               }
             ],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/vuelos/reservas/revalidacion"
-            }
+            "url": "{{baseUrl}}/api/v1/vuelos/reservas/revalidacion"
           }
         },
         {
@@ -931,9 +871,7 @@
                 "value": "Bearer {{tokenAdmin}}"
               }
             ],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/vuelos/reservas/revalidacion"
-            }
+            "url": "{{baseUrl}}/api/v1/vuelos/reservas/revalidacion"
           }
         },
         {
@@ -958,9 +896,7 @@
                 "value": "Bearer {{tokenCliente}}"
               }
             ],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/vuelos/reservas/{{reservaPendienteId}}"
-            }
+            "url": "{{baseUrl}}/api/v1/vuelos/reservas/{{reservaPendienteId}}"
           }
         }
       ],
