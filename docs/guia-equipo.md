@@ -317,7 +317,7 @@ La rúbrica de corrección tiene 12 criterios y 105 puntos (los vimos al armar e
 | ALC-01 Alcance comprometido (cuestionario) | 8 | **Casi** | Todo lo comprometido está implementado. Diferencia conocida: reprogramar con el clima caído responde 503 en vez de dejar CONFIRMACION_PENDIENTE. Revisar el cuestionario enviado contra esto antes de la fecha. |
 | DES-01 Desafío asumido | 5 | **Listo** | [`docs/desafio.md`](desafio.md): desafíos, decisiones comparadas y límites. |
 | API-01 Colecciones de Postman | 5 | **Armadas, sin ejecutar** | Hay 2 colecciones + environment en `docs/postman/`. **Nunca se corrieron**: puede haber scripts que fallen. |
-| PRE-01 Presentación y defensa | 5 | **Material listo, falta ensayar** | Guion de 10 minutos y 12 preguntas en [`docs/guia-defensa.md`](guia-defensa.md). |
+| PRE-01 Presentación y defensa | 5 | **Material listo, falta repartir y ensayar** | Guión general y cinco partes por integrante en [`docs/guion-exposicion.md`](guion-exposicion.md); 12 preguntas en [`docs/guia-defensa.md`](guia-defensa.md). |
 | DOC-01 Apreciación docente | 5 | Depende del docente | Prolijidad, README, que todos sepan explicarlo. |
 
 Extras que **no** están (decisión del grupo): Prometheus y Grafana. Se sacaron "por ahora".
@@ -338,7 +338,7 @@ Extras que **no** están (decisión del grupo): Prometheus y Grafana. Se sacaron
 **C. Antes de la entrega**
 8. **Empezar de cero**: `docker compose down -v` + `up --build`, para tener turnos futuros frescos el día de la defensa.
 9. **`mvn test` en los 4 módulos** en la PC donde se va a mostrar.
-10. **Ensayar el guion de 10 minutos** con todos, y que cada uno responda 3 preguntas de la guía al azar (todos tienen que poder explicar todo; no hay reparto por piezas).
+10. **Repartir las cinco partes de [`guion-exposicion.md`](guion-exposicion.md) y ensayar** (el guión general lo sabe todo el grupo; cada uno prepara su parte a fondo).
 11. **Releer el cuestionario enviado** contra el estado real (sección 5, ALC-01).
 
 **D. Opcional si sobra tiempo (mejora TEC-01)**
@@ -354,16 +354,18 @@ Extras que **no** están (decisión del grupo): Prometheus y Grafana. Se sacaron
 - La revalidación la dispara un administrador; no hay tarea programada automática.
 - No hay pruebas de integración automáticas contra PostgreSQL o Keycloak; esas se hicieron a mano (sección 3).
 
-## 8. Plan sugerido para repartirse la lectura
+## 8. Cómo se reparte la exposición
 
-Como todos defienden todo, la idea no es dividir la defensa sino **leer en paralelo y contárselo al resto**:
+El docente pidió (audios del 9/11/2026) un **guión general** que todo el grupo sabe y un **guión detallado por integrante**, donde cada uno se centra en **una parte del código**. Las preguntas son sobre el código, sin trampas, y se asume que se usó IA: lo que cuenta es entender qué hace.
 
-| Quién | Lee y explica al grupo |
+Todo está en [`docs/guion-exposicion.md`](guion-exposicion.md): el guión general (incluido el flujo de autenticación) y cinco partes para repartir, cada una con qué explicar, archivos a leer, qué mostrar y preguntas probables.
+
+| Parte | Tema |
 |---|---|
-| Integrante 1 | Secciones 1 y 2 + `docker-compose.yml` y Keycloak (infraestructura y arranque) |
-| Integrante 2 | `ReservaService.crear` y estados (el proceso central) |
-| Integrante 3 | Reglas R1–R10 (`docs/reglas.md`) y sus tests |
-| Integrante 4 | Pilotos y Clima: `ReglasAsignacion`, `ReglaClima`, Open-Meteo |
-| Integrante 5 | Seguridad: gateway, `ConversorRoles`, roles y JWT |
+| A | Autenticación, roles y gateway |
+| B | El proceso de reserva (Vuelos) |
+| C | Reglas de negocio y pruebas |
+| D | Pilotos y comunicación entre servicios |
+| E | Clima, revalidación e infraestructura |
 
-Luego se rotan los temas. Cierra el grupo con el ensayo de la defensa.
+Cada integrante prepara **su** parte a fondo y conoce el resto a grandes rasgos. Quién toma cuál lo decide el grupo.

@@ -1,5 +1,7 @@
 # Guía de defensa
 
+> El formato de la exposición (guión general más una parte por integrante, flujo de autenticación incluido) está en [`guion-exposicion.md`](guion-exposicion.md). Esta guía conserva el guion de 10 minutos y las 12 preguntas probables.
+
 ## Guion de 10 minutos
 
 | Min | Qué mostrar | Qué decir |
