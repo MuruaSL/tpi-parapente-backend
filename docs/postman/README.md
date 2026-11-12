@@ -18,7 +18,7 @@ Sistema levantado (`docker compose up`, o servicios locales + Keycloak en 8180) 
 2. **Seguridad y errores**, carpetas 0 a 3 (desmarcar la carpeta 4 "MANUAL").
 3. Carpeta 4 de Seguridad: escenarios manuales (abajo), ejecutando cada request a mano.
 
-Los tokens duran poco (5 min por defecto en Keycloak): si se pasa de tiempo, volver a correr la carpeta 0 Auth.
+Los tokens duran 1 hora (accessTokenLifespan = 3600 en el realm): si se vencen, volver a correr la carpeta 0 Auth.
 
 ## Que cubre
 - Flujo feliz turno 1 (PRUEBA_APTO) 201 CONFIRMADA; mis reservas; agenda de piloto1.
